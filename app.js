@@ -2,12 +2,13 @@ import { createTable, populateTable } from './src/vani-table/vani-table';
 import DataSource from './src/dataSource/dataSource';
 
 import './style.css'
-import { debounce } from './src/core/utilities';
+import { addToArray, debounce } from './src/core/utilities';
 
 const ITEMS_PER_PAGE = 10;
 const TABLE_CONTAINER_ID = 'vani-table';
 const JSON_FILE_LOCATION = './assets/records.json';
 
+const seachHistory = [];
 let searchTerm = '';
 let searchColumn = '';
 let currentPage = Number(sessionStorage.getItem("pageNumber")) ?? 1;
@@ -28,17 +29,17 @@ prevPage.addEventListener('click', function(e){
       
       currentPage -= 1;
 
-      // dataSource.filterData( searchColumn, searchTerm)
-      // .then(
-      //   (res)=>{
-      //     dataSource.paginateFromData(1,res)
-      //       .then( page => { populateTable(TABLE_CONTAINER_ID, page); })
-      //   }
-      // )
+      dataSource.filterData(searchColumn, searchTerm)
+      .then(
+        (res)=>{
+          dataSource.paginateFromData(currentPage,res)
+            .then( page => { populateTable(TABLE_CONTAINER_ID, page); })
+        }
+      )
 
-      dataSource.paginate(currentPage).then(res=>{  
-        populateTable(TABLE_CONTAINER_ID, res )
-      })
+    //   dataSource.paginate(currentPage).then(res=>{  
+    //     populateTable(TABLE_CONTAINER_ID, res )
+    //   })
       
       sessionStorage.removeItem('pageNumber');
       sessionStorage.setItem('pageNumber',currentPage);
@@ -50,52 +51,76 @@ prevPage.addEventListener('click', function(e){
 const nextPage = document.querySelector("#paginator_next_btn");
 nextPage.addEventListener('click', function(){
   
-  currentPage += 1 ;
-
-  dataSource.paginate(currentPage).then(res=>{  
-    populateTable(TABLE_CONTAINER_ID, res )
-  })
+    currentPage += 1 ;
+    dataSource.filterData(searchColumn, searchTerm)
+        .then(
+            (res)=>{
+                debugger;
+                dataSource.paginateFromData(currentPage,res)
+                .then( page => { populateTable(TABLE_CONTAINER_ID, page); })
+        }
+    )
+//   dataSource.paginate(currentPage).then(res=>{  
+//     populateTable(TABLE_CONTAINER_ID, res )
+//   })
 
   sessionStorage.removeItem('pageNumber');
   sessionStorage.setItem('pageNumber',currentPage);
   console.log('currentPage', currentPage)
 })
 
+
+
 const nameSearchInput = document.querySelector('#filter-input-name');
 nameSearchInput.addEventListener("input", (evnt)=>{
-  debounce(()=>{
-    dataSource.filterData('name', evnt.target.value)
-    .then(
-      (res)=>{
-          searchTerm = evnt.target.value;
-          searchColumn = 'name';
-          currentPage = 0;
-          
-          sessionStorage.removeItem('pageNumber');
-          sessionStorage.setItem('pageNumber',currentPage);
+    debounce(()=>{
 
-          dataSource.paginateFromData(1,res)
+    const filterItem = {
+        field : 'name',
+        value : evnt.target.value || ''
+    }
+    
+    addToArray(filterItem,seachHistory,3);
+
+    dataSource.filterDataMultiple(seachHistory)
+    .then(
+        (res)=>{
+            debugger
+            currentPage = 1;
+            
+            sessionStorage.removeItem('pageNumber');
+            sessionStorage.setItem('pageNumber',currentPage);
+
+            dataSource.paginateFromData(currentPage,res)
             .then(page=>{populateTable(TABLE_CONTAINER_ID,page);})
         }
-      )
-  },
-  1000)()
+        )
+    },
+    1000)()
 })
 
 const adDateSearchInput = document.querySelector('#filter-input-date');
 adDateSearchInput.addEventListener("input", (evnt)=>{
   debounce(()=>{
-    dataSource.filterData('date', evnt.target.value)
+
+    const filterItem = {
+        field : 'date',
+        value : evnt.target.value || ''
+    }
+    
+    addToArray(filterItem,seachHistory,3);
+
+    dataSource.filterDataMultiple(seachHistory)
       .then(
         (res)=>{
           searchTerm = evnt.target.value;
           searchColumn = 'date';
-          currentPage = 0;
+          currentPage = 1;
           
           sessionStorage.removeItem('pageNumber');
           sessionStorage.setItem('pageNumber',currentPage);
 
-          dataSource.paginateFromData(1,res)
+          dataSource.paginateFromData(currentPage,res)
             .then(page=>{populateTable(TABLE_CONTAINER_ID,page);})
         }
       )
@@ -105,8 +130,17 @@ adDateSearchInput.addEventListener("input", (evnt)=>{
 
 const adTitleSearchInput = document.querySelector('#filter-input-title');
 adTitleSearchInput.addEventListener("input", (evnt)=>{
+    
   debounce(()=>{
-    dataSource.filterData('title', evnt.target.value)
+
+    const filterItem = {
+        field : 'title',
+        value : evnt.target.value || ''
+    }
+    
+    addToArray(filterItem,seachHistory,3);
+
+    dataSource.filterDataMultiple(seachHistory)
       .then(
         (res)=>{
           searchTerm = evnt.target.value;
