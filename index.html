@@ -38,12 +38,24 @@
           <div class=" max-h-[450px] overflow-y-auto" id="vani-table"></div>
           
           <!-- paginator -->
-          <div class=" flex flex-row gap-[20px] my-8">
+          <div class=" flex flex-row gap-[20px] my-8 items-center">
             
             <!-- TODO : add total number of items here  -->
             <button id="paginator_pre_btn" class="p-4 rounded-full border border-slate-200">Previous</button>
             <button id="paginator_next_btn" class="p-4 rounded-full border border-slate-200">Next</button>
             
+            <p>
+              page
+              <span id="page-number-container"></span>
+              of
+              <span id="total-page-number-container"></span>
+              [
+              a total of
+              <span id="total-items-container"></span>
+              items
+              ]
+            </p>
+
           </div>
           
         </div>
