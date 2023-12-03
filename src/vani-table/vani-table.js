@@ -1,7 +1,6 @@
 import {getTableColumns} from "./table-columns";
 
 
-// TODO : get columns list as object 
 export function createTable(containerId){
 
     // safety check
@@ -52,7 +51,6 @@ export function populateTable(refId,data){
         tbody = document.createElement('tbody');
     }
 
-    // TODO : Check this !
     const pageData = data;
     const fragment = new DocumentFragment();
     
