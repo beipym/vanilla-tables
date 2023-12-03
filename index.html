@@ -7,10 +7,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite App</title>
   </head>
-  <body>
-    <div id="app">
-      <span class="bg-red-200">Hello Vite !</span>
-    </div>
-    <script type="module" src="/main.js"></script>
-  </body>
-</html>
+  <body
+    class="bg-slate-200">
+
+    <div class="app w-screen h-screen flex">
+
+        
+        <div class="bg-white w-10/12 h-fit m-auto p-8 shadow shadow-2xl rounded-xl">
+          
+          <!-- filters -->
+          <div class=" mb-10  flex flex-row justify-between">
+            <input 
+              id="filter-input-name" 
+              class="border border-slate-400 rounded indent-4 text-sm"
+              placeholder="Search For Name ...">
+
+            <input 
+              id="filter-input-date" 
+              class="border border-slate-400 rounded indent-4 text-sm"
+              placeholder="Search For date ...">
+
+            <input 
+              id="filter-input-title" 
+              class="border border-slate-400 rounded indent-4 text-sm"
+              placeholder="Search For title ...">
+              
+          </div>
+          
+          <!-- table -->
+          <div class=" max-h-[450px] overflow-y-auto" id="vani-table"></div>
+          
+          <!-- paginator -->
+          <div class=" flex flex-row gap-[20px] my-8">
+            
+            <!-- TODO : add total number of items here  -->
+            <button id="paginator_pre_btn" class="p-4 rounded-full border border-slate-200">Previous</button>
+            <button id="paginator_next_btn" class="p-4 rounded-full border border-slate-200">Next</button>
+            
+          </div>
+          
+        </div>
+      </div>
+      
+      <script type="module" src="/app.js"></script>
+    </body>
+    </html>
+    
