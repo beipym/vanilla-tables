@@ -110,12 +110,6 @@ adTitleSearchInput.addEventListener("input", (evnt)=>{
   DEFAULT_TIMEOUT)()
 })
 
-function setCurrentPage(pageNumber){
-
-    sessionStorage.removeItem('pageNumber');
-    sessionStorage.setItem('pageNumber',currentPage);
-
-}
 
 
 function updateTable(){
