@@ -117,78 +117,70 @@ function updateTable(){
     let page, name, date, title, sort = undefined;
     const searchArray = [];
     
-    debounce(
-        ()=>{
-            page = readURLData('page');
-            name = readURLData('name');
-            date = readURLData('date');
-            title = readURLData('title');
-            sort = readURLData('sort');
+    page = readURLData('page');
+    name = readURLData('name');
+    date = readURLData('date');
+    title = readURLData('title');
+    sort = readURLData('sort');
+    
+    pageNumberRef.innerHTML=currentPage.toString()
+
+
+    addToArray({
+        field : 'name',
+        value : name } ,
+        searchArray,
+        3);
+    addToArray({
+        field : 'date',
+        value : date } ,
+        searchArray,
+        3);
+    addToArray({
+        field : 'title',
+        value : title } ,
+        searchArray,
+        3);
+        
+    if(name||date||title){
             
-            pageNumberRef.innerHTML=currentPage.toString()
+        dataSource.filterDataMultiple(searchArray,sort )
+            .then(
+            (res)=>{
 
+                dataSource.getTotalPageNumber(res).then(pages=>{
+                    totalPagesContainer.innerHTML = pages.toString();
+                    totalPages = pages;
+                });
 
-            addToArray({
-                field : 'name',
-                value : name } ,
-                searchArray,
-                3);
-            addToArray({
-                field : 'date',
-                value : date } ,
-                searchArray,
-                3);
-            addToArray({
-                field : 'title',
-                value : title } ,
-                searchArray,
-                3);
-                
-            if(name||date||title){
-                    
-                dataSource.filterDataMultiple(searchArray,sort )
-                    .then(
-                    (res)=>{
+                dataSource.getTotalItemsNumber(res).then(records=>{
+                    totalNumberOfItemsContainer.innerHTML = records.toString();
+                })
 
-                        dataSource.getTotalPageNumber(res).then(pages=>{
-                            totalPagesContainer.innerHTML = pages.toString();
-                            totalPages = pages;
-                        });
+                dataSource.paginateFromData(page,res)
+                .then(pagedata=>{populateTable(TABLE_CONTAINER_ID,pagedata);})
+                }
+            )
 
-                        dataSource.getTotalItemsNumber(res).then(records=>{
-                            totalNumberOfItemsContainer.innerHTML = records.toString();
-                        })
+    } else {
 
-                        dataSource.paginateFromData(page,res)
-                        .then(pagedata=>{populateTable(TABLE_CONTAINER_ID,pagedata);})
-                        }
-                    )
+        dataSource.sortData(sort).then(
+            res=>{
 
-            } else {
+                dataSource.getTotalPageNumber(res).then(pages=>{
+                    totalPagesContainer.innerHTML = pages.toString();
+                    totalPages = pages;
+                });
 
-                dataSource.sortData(sort).then(
-                    res=>{
+                dataSource.getTotalItemsNumber(res).then(records=>{
+                    totalNumberOfItemsContainer.innerHTML = records.toString();
+                })
 
-                        dataSource.getTotalPageNumber(res).then(pages=>{
-                            totalPagesContainer.innerHTML = pages.toString();
-                            totalPages = pages;
-                        });
-
-                        dataSource.getTotalItemsNumber(res).then(records=>{
-                            totalNumberOfItemsContainer.innerHTML = records.toString();
-                        })
-
-                        dataSource.paginateFromData(page,res)
-                        .then(pagedata=>{populateTable(TABLE_CONTAINER_ID,pagedata);})
-                    }
-                )
+                dataSource.paginateFromData(page,res)
+                .then(pagedata=>{populateTable(TABLE_CONTAINER_ID,pagedata);})
             }
-
-
-
-        },
-        DEFAULT_TIMEOUT
-    )()
+        )
+    }
 
 
 }
