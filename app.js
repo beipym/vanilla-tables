@@ -20,6 +20,11 @@ let totalPages = 1;
 
 createTable(TABLE_CONTAINER_ID);
 updateTable()
+updateInputValues(
+    'filter-input-name',
+    'filter-input-date',
+    'filter-input-title',
+)
 
 const sortBtn = document.querySelector("#change-sort");
 sortBtn.addEventListener('click', function(e){
@@ -66,9 +71,9 @@ nextPage.addEventListener('click', function(){
 
 })
 
-
-
 const nameSearchInput = document.querySelector('#filter-input-name');
+const nameFromQuery = readURLData('name');
+if(nameFromQuery){nameSearchInput.value = nameFromQuery}
 nameSearchInput.addEventListener("input", (evnt)=>{
     debounce(()=>{
 
@@ -127,7 +132,6 @@ function updateTable(){
         currentPage = 1;
         writeURLData([`page=${currentPage}`])
     }    
-    
     if(!sort){
         sort = 'desc';
         writeURLData([`sort=${sort}`])
@@ -166,5 +170,24 @@ function updateTable(){
                 .then(pagedata=>{populateTable(TABLE_CONTAINER_ID,pagedata);})
                 }
             )
+
+}
+
+
+function updateInputValues(nameInputRef, dateInputRef, titleInputRef){
+
+    let name, date, title = undefined;
+    
+    name = readURLData('name');
+    date = readURLData('date');
+    title = readURLData('title');
+
+    const nameinput = document.querySelector(`#${nameInputRef}`)
+    const dateinput = document.querySelector(`#${dateInputRef}`)
+    const titleinput = document.querySelector(`#${titleInputRef}`)
+
+    if(name){nameinput.value = name}
+    if(date){dateinput.value = date}
+    if(title){titleinput.value = title}
 
 }
