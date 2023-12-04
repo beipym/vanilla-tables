@@ -1,3 +1,9 @@
+/**
+ * 
+ * @param {Function} func 
+ * @param {number} wait miliseconds (default is 0)
+ * @returns good old debounce function!
+ */
 export function debounce(func, wait = 0) {
     let timeoutID = null;
     return function (...args) {
@@ -12,13 +18,13 @@ export function debounce(func, wait = 0) {
     };
   }
 
-  /**
-   * 
-   * @param {Object} item 
-   * @param {Array} array 
-   * @param {Number} maxArraySize 
-   * 
-   */
+/**
+ * 
+ * @param {Object} item 
+ * @param {Array} array 
+ * @param {Number} maxArraySize 
+ * 
+ */
 export function addToArray(item, array, maxArraySize){
   if(array.length < maxArraySize){
     const existingIndex = array.findIndex(
@@ -33,6 +39,7 @@ export function addToArray(item, array, maxArraySize){
     } 
   }
 }
+
 /**
  * 
  * @param {string} parameterName 
@@ -47,6 +54,11 @@ export function readURLData(parameterName) {
   return parameterValue;
 }
 
+/**
+ * 
+ * @param {URLSearchParams} newParams 
+ * a function to write params to url 
+ */
 export function writeURLData(newParams) {
   const url = new URL(window.location.href);
   const searchParams = new URLSearchParams(url.search);
@@ -60,6 +72,9 @@ export function writeURLData(newParams) {
     if (searchParams.has(key)) {
       // If the parameter already exists, update its value
       searchParams.set(key, value);
+      if(value === ""){
+        searchParams.delete(key)
+      }
     } else {
       // If the parameter doesn't exist, add it
       searchParams.append(key, value);
