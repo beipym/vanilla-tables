@@ -7,18 +7,18 @@ import { addToArray, debounce, readURLData, writeURLData } from './src/core/util
 const ITEMS_PER_PAGE = 10;
 const TABLE_CONTAINER_ID = 'vani-table';
 const JSON_FILE_LOCATION = './assets/records.json';
+const DEFAULT_TIMEOUT = 100;
 
 const dataSource = new DataSource(JSON_FILE_LOCATION, ITEMS_PER_PAGE);
 const totalNumberOfItemsContainer = document.querySelector("#total-items-container");
 const totalPagesContainer = document.querySelector("#total-page-number-container");
+const pageNumberRef = document.querySelector("#page-number-container");
 
 let currentPage = Number(sessionStorage.getItem("pageNumber")) ?? 1;
 let isDescending = true;
+let totalPages = 1;
 
 createTable(TABLE_CONTAINER_ID);
-
-setCurrentPage(currentPage)
-
 updateTable()
 
 const sortBtn = document.querySelector("#change-sort");
@@ -32,7 +32,7 @@ sortBtn.addEventListener('click', function(e){
             writeURLData([`sort=${sortOrder}`])
             updateTable()
 
-        },100
+        },50
     )()
 
     
@@ -41,22 +41,15 @@ sortBtn.addEventListener('click', function(e){
 // paginator events
 const prevPage = document.querySelector("#paginator_pre_btn");
 prevPage.addEventListener('click', function(e){
+
     if(currentPage > 1){
-    currentPage -= 1;
-    
-    writeURLData([`page=${currentPage}`])
-    updateTable()
 
-    dataSource.filterData(searchColumn, searchTerm)
-        .then(
-            (res)=>{
-            dataSource.paginateFromData(currentPage,res)
-                .then( page => { populateTable(TABLE_CONTAINER_ID, page); })
-            }
-        )
-        setCurrentPage(currentPage)
+        currentPage -= 1;
+        writeURLData([`page=${currentPage}`])
+        updateTable()
 
-    }    
+    }
+
 })
 
 
@@ -67,12 +60,13 @@ dataSource.paginate(currentPage).then(res=>{
 const nextPage = document.querySelector("#paginator_next_btn");
 nextPage.addEventListener('click', function(){
   
-
-    currentPage += 1 ;
-
-    writeURLData([`page=${currentPage}`])
-    updateTable()
-
+    if(currentPage < totalPages){
+        
+        currentPage += 1 ;
+        writeURLData([`page=${currentPage}`])
+        updateTable()
+        
+    }
 
 })
 
@@ -87,7 +81,7 @@ nameSearchInput.addEventListener("input", (evnt)=>{
     updateTable()
     
     },
-    1000)()
+    DEFAULT_TIMEOUT)()
 
 })
 
@@ -100,7 +94,7 @@ adDateSearchInput.addEventListener("input", (evnt)=>{
     updateTable()
 
   },
-  1000)()
+  DEFAULT_TIMEOUT)()
 })
 
 const adTitleSearchInput = document.querySelector('#filter-input-title');
@@ -113,7 +107,7 @@ adTitleSearchInput.addEventListener("input", (evnt)=>{
     updateTable()
 
   },
-  1000)()
+  DEFAULT_TIMEOUT)()
 })
 
 function setCurrentPage(pageNumber){
@@ -121,8 +115,6 @@ function setCurrentPage(pageNumber){
     sessionStorage.removeItem('pageNumber');
     sessionStorage.setItem('pageNumber',currentPage);
 
-    const containerRef = document.querySelector("#page-number-container");
-    containerRef.innerHTML=currentPage.toString()
 }
 
 
@@ -139,6 +131,8 @@ function updateTable(){
             title = readURLData('title');
             sort = readURLData('sort');
             
+            pageNumberRef.innerHTML=currentPage.toString()
+
 
             addToArray({
                 field : 'name',
@@ -162,10 +156,9 @@ function updateTable(){
                     .then(
                     (res)=>{
 
-                        debugger
-
                         dataSource.getTotalPageNumber(res).then(pages=>{
                             totalPagesContainer.innerHTML = pages.toString();
+                            totalPages = pages;
                         });
 
                         dataSource.getTotalItemsNumber(res).then(records=>{
@@ -176,12 +169,15 @@ function updateTable(){
                         .then(pagedata=>{populateTable(TABLE_CONTAINER_ID,pagedata);})
                         }
                     )
+
             } else {
+
                 dataSource.sortData(sort).then(
                     res=>{
 
                         dataSource.getTotalPageNumber(res).then(pages=>{
                             totalPagesContainer.innerHTML = pages.toString();
+                            totalPages = pages;
                         });
 
                         dataSource.getTotalItemsNumber(res).then(records=>{
@@ -197,7 +193,7 @@ function updateTable(){
 
 
         },
-        500
+        DEFAULT_TIMEOUT
     )()
 
 
