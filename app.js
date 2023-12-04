@@ -8,14 +8,12 @@ const ITEMS_PER_PAGE = 10;
 const TABLE_CONTAINER_ID = 'vani-table';
 const JSON_FILE_LOCATION = './assets/records.json';
 
-const searchHistory = [];
 const dataSource = new DataSource(JSON_FILE_LOCATION, ITEMS_PER_PAGE);
 const totalNumberOfItemsContainer = document.querySelector("#total-items-container");
 const totalPagesContainer = document.querySelector("#total-page-number-container");
 
-let searchTerm = '';
-let searchColumn = '';
 let currentPage = Number(sessionStorage.getItem("pageNumber")) ?? 1;
+let isDescending = true;
 
 createTable(TABLE_CONTAINER_ID);
 
@@ -23,18 +21,26 @@ setCurrentPage(currentPage)
 
 updateTable()
 
-dataSource.getTotalPageNumber().then(res=>{
-    totalPagesContainer.innerHTML = res.toString();
-});
+const sortBtn = document.querySelector("#change-sort");
+sortBtn.addEventListener('click', function(e){
+    
+    debounce(
+        ()=>{
 
-dataSource.getTotalItemsNumber().then(res=>{
-    totalNumberOfItemsContainer.innerHTML = res.toString();
+            isDescending = !isDescending;
+            const sortOrder = isDescending ? 'desc' : 'asc';
+            writeURLData([`sort=${sortOrder}`])
+            updateTable()
+
+        },100
+    )()
+
+    
 })
 
 // paginator events
 const prevPage = document.querySelector("#paginator_pre_btn");
 prevPage.addEventListener('click', function(e){
-    e.stopPropagation()
     if(currentPage > 1){
     currentPage -= 1;
     
@@ -150,15 +156,45 @@ function updateTable(){
                 searchArray,
                 3);
                 
-            
+            if(name||date||title){
+                    
+                dataSource.filterDataMultiple(searchArray,sort )
+                    .then(
+                    (res)=>{
 
-            dataSource.filterDataMultiple(searchArray)
-                .then(
-                (res)=>{
-                    dataSource.paginateFromData(page,res)
-                    .then(pagedata=>{populateTable(TABLE_CONTAINER_ID,pagedata);})
+                        debugger
+
+                        dataSource.getTotalPageNumber(res).then(pages=>{
+                            totalPagesContainer.innerHTML = pages.toString();
+                        });
+
+                        dataSource.getTotalItemsNumber(res).then(records=>{
+                            totalNumberOfItemsContainer.innerHTML = records.toString();
+                        })
+
+                        dataSource.paginateFromData(page,res)
+                        .then(pagedata=>{populateTable(TABLE_CONTAINER_ID,pagedata);})
+                        }
+                    )
+            } else {
+                dataSource.sortData(sort).then(
+                    res=>{
+
+                        dataSource.getTotalPageNumber(res).then(pages=>{
+                            totalPagesContainer.innerHTML = pages.toString();
+                        });
+
+                        dataSource.getTotalItemsNumber(res).then(records=>{
+                            totalNumberOfItemsContainer.innerHTML = records.toString();
+                        })
+
+                        dataSource.paginateFromData(page,res)
+                        .then(pagedata=>{populateTable(TABLE_CONTAINER_ID,pagedata);})
                     }
                 )
+            }
+
+
 
         },
         500
