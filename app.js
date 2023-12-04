@@ -30,6 +30,7 @@ sortBtn.addEventListener('click', function(e){
             isDescending = !isDescending;
             const sortOrder = isDescending ? 'desc' : 'asc';
             writeURLData([`sort=${sortOrder}`])
+            sortBtn.innerHTML = ` Order By Date ${isDescending ? 'Descending' : 'Ascending' } `
             updateTable()
 
         },50
