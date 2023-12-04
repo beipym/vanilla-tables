@@ -26,3 +26,40 @@ export function addToArray(item, array, maxArraySize){
     } 
   }
 }
+/**
+ * 
+ * @param {string} parameterName 
+ * @returns 
+ */
+export function readURLData(parameterName) {
+  const url = window.location.href;
+  const urlParams = new URLSearchParams(url.split("?")[1]);
+
+  // Read the query parameter
+  const parameterValue = urlParams.get(parameterName);
+  return parameterValue;
+}
+
+export function writeURLData(newParams) {
+  const url = new URL(window.location.href);
+  const searchParams = new URLSearchParams(url.search);
+
+  // Add new parameters
+  for (const param of newParams) {
+    const keyValue = param.split('=');
+    const key = keyValue[0];
+    let value = keyValue[1];
+
+    if (searchParams.has(key)) {
+      // If the parameter already exists, update its value
+      searchParams.set(key, value);
+    } else {
+      // If the parameter doesn't exist, add it
+      searchParams.append(key, value);
+    }
+  }
+
+  url.search = searchParams.toString();
+  history.pushState({}, '', url.toString());
+}
+  

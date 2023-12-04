@@ -4,6 +4,7 @@ export default class DataSource {
       this.jsonFileUrl  = jsonFileUrl;
       this.itemsPerPage = itemsPerPage;
       this._sortColumn  = 'date';
+      this.sortOrder = 'desc';
     }
   
     async loadData() {
@@ -30,7 +31,7 @@ export default class DataSource {
       const data = dataToSort;
       data.sort((a, b) => {
         const result = a[this._sortColumn].localeCompare(b[this._sortColumn]);
-        return order === 'desc' ? -result : result;
+        return order === this.sortOrder ? -result : result;
       });
       return data;
     } 
@@ -39,7 +40,7 @@ export default class DataSource {
       const data = await this.loadData();
       data.sort((a, b) => {
         const result = a[this._sortColumn].localeCompare(b[this._sortColumn]);
-        return order === 'desc' ? -result : result;
+        return order === this.sortOrder ? -result : result;
       });
       return data;
     }
@@ -59,9 +60,11 @@ export default class DataSource {
 
       return data.filter((item) => {
         return filterItems.every((filterItem) => {
-          if(filterItem.value){
+          if(filterItem.value !==   ''){
             const filterValue = filterItem.value;
             return item[filterItem.field].toLowerCase().includes(filterValue.toLowerCase());
+          } else {
+            return item
           }
         });
       });
@@ -70,6 +73,13 @@ export default class DataSource {
     get sortColumn(){
       return this._sortColumn;
     }
+
+    /**
+   * @param {string} value
+   */
+    // set sortOrder(value){
+    //   this.sortOrder = value;
+    // }
 
     async getTotalPageNumber(){
       const totalRecords = await this.loadData();
