@@ -16,22 +16,39 @@
         <div class="bg-white w-10/12 h-fit m-auto p-8 shadow shadow-2xl rounded-xl">
           
           <!-- filters -->
-          <div class=" mb-10  flex flex-row justify-between">
-            <input 
-              id="filter-input-name" 
-              class="border border-slate-400 rounded indent-4 text-sm"
-              placeholder="Search For Name ...">
+          <div class=" mb-10  flex flex-row justify-start gap-[20px]">
+            <div class="flex flex-col">
+              <span>
+                search for name
+              </span>
+              <input 
+                id="filter-input-name" 
+                class="border border-slate-400 rounded indent-4 text-sm"
+                placeholder=" Name ">
+            </div>
 
-            <input 
-              id="filter-input-date" 
-              class="border border-slate-400 rounded indent-4 text-sm"
-              placeholder="Search For date ...">
+            <div class="flex flex-col">
+              <span>
+                search for date
+              </span>
+              <input 
+                id="filter-input-date" 
+                class="border border-slate-400 rounded indent-4 text-sm"
+                placeholder="YYYY-MM-DD">
+            </div>
 
-            <input 
-              id="filter-input-title" 
-              class="border border-slate-400 rounded indent-4 text-sm"
-              placeholder="Search For title ...">
-              
+            <div class="flex flex-col">
+              <span>
+                search for title
+              </span>
+              <input 
+                id="filter-input-title" 
+                class="border border-slate-400 rounded indent-4 text-sm"
+                placeholder=" title ">
+            </div>
+              <button id="change-sort" class="flex-end text-xs rounded bg-slate-200 px-2">
+                Order by Date Descending
+              </button>
           </div>
           
           <!-- table -->
