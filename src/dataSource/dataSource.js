@@ -82,17 +82,22 @@ export default class DataSource {
      */
     async filterDataMultiple(filterItems, sortOrder) {
       const data = await this.sortData(sortOrder);
+      
+      // if(filterItems.length > 0 ){
 
-      return data.filter((item) => {
-        return filterItems.every((filterItem) => {
-          if(filterItem && filterItem.value !==   '' && filterItem.value !== null){
-            const filterValue = filterItem.value;
-            return item[filterItem.field].toLowerCase().includes(filterValue.toLowerCase());
-          } else {
-            return item
-          }
+        return data.filter((item) => {
+          return filterItems.every((filterItem) => {
+            if(filterItem && filterItem.value !==   '' && filterItem.value !== null){
+              const filterValue = filterItem.value;
+              return item[filterItem.field].toLowerCase().includes(filterValue.toLowerCase());
+            } else {
+              return item
+            }
+          });
         });
-      });
+      // } else {
+      //   return data
+      // }
     }
     
     /**

@@ -119,7 +119,7 @@ function updateTable(){
     sort = readURLData('sort');
     
     pageNumberRef.innerHTML = currentPage.toString()
-
+    
     //safety check 
     if(!page){
         page = 1;
@@ -161,7 +161,7 @@ function updateTable(){
                     totalNumberOfItemsContainer.innerHTML = records.toString();
                 })
 
-                dataSource.paginateFromData(page,res)
+                dataSource.paginateFromData(page,res,sort)
                 .then(pagedata=>{populateTable(TABLE_CONTAINER_ID,pagedata);})
                 }
             )
