@@ -73,22 +73,6 @@ export default class DataSource {
       });
       return data;
     }
-  
-    /**
-     * 
-     * @param {String} filterField 
-     * @param {String} filterValue 
-     * @returns filtered data based on the field name and value
-     */
-    async filterData(filterField , filterValue) {
-      const data = await this.sortData();
-      if(filterField && filterValue){
-
-        return data.filter(item => {
-          return item[filterField].toLowerCase().includes(filterValue.toLowerCase());
-        });
-      } else return data;
-    }
 
     /**
      * 
@@ -97,11 +81,11 @@ export default class DataSource {
      * @returns filtered data based on multiple filters
      */
     async filterDataMultiple(filterItems, sortOrder) {
-      const data = await this.sortData();
+      const data = await this.sortData(sortOrder);
 
       return data.filter((item) => {
         return filterItems.every((filterItem) => {
-          if(filterItem.value !==   ''){
+          if(filterItem && filterItem.value !==   '' && filterItem.value !== null){
             const filterValue = filterItem.value;
             return item[filterItem.field].toLowerCase().includes(filterValue.toLowerCase());
           } else {
