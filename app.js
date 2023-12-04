@@ -52,11 +52,6 @@ prevPage.addEventListener('click', function(e){
 
 })
 
-
-dataSource.paginate(currentPage).then(res=>{  
-  populateTable(TABLE_CONTAINER_ID, res )
-})
-
 const nextPage = document.querySelector("#paginator_next_btn");
 nextPage.addEventListener('click', function(){
   
@@ -123,8 +118,19 @@ function updateTable(){
     title = readURLData('title');
     sort = readURLData('sort');
     
-    pageNumberRef.innerHTML=currentPage.toString()
+    pageNumberRef.innerHTML = currentPage.toString()
 
+    //safety check 
+    if(!page){
+        page = 1;
+        currentPage = 1;
+        writeURLData([`page=${currentPage}`])
+    }    
+    
+    if(!sort){
+        sort = 'desc';
+        writeURLData([`sort=${sort}`])
+    }
 
     addToArray({
         field : 'name',
@@ -142,8 +148,6 @@ function updateTable(){
         searchArray,
         3);
         
-    if(name||date||title){
-            
         dataSource.filterDataMultiple(searchArray,sort )
             .then(
             (res)=>{
@@ -161,26 +165,5 @@ function updateTable(){
                 .then(pagedata=>{populateTable(TABLE_CONTAINER_ID,pagedata);})
                 }
             )
-
-    } else {
-
-        dataSource.sortData(sort).then(
-            res=>{
-
-                dataSource.getTotalPageNumber(res).then(pages=>{
-                    totalPagesContainer.innerHTML = pages.toString();
-                    totalPages = pages;
-                });
-
-                dataSource.getTotalItemsNumber(res).then(records=>{
-                    totalNumberOfItemsContainer.innerHTML = records.toString();
-                })
-
-                dataSource.paginateFromData(page,res)
-                .then(pagedata=>{populateTable(TABLE_CONTAINER_ID,pagedata);})
-            }
-        )
-    }
-
 
 }
